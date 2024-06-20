@@ -6,6 +6,7 @@ import (
 	"github.com/ko44d/hrmos-time-aggregator/pkg/config"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 type WorkOutputsMonthlyRepository interface {
@@ -89,8 +90,8 @@ type Work struct {
 	OtherOperationRatio string `json:"other_operation_ratio"`
 }
 
-func NewWorkOutputsMonthlyRepository(config config.Config) WorkOutputsMonthlyRepository {
-	return &workOutputsMonthlyRepository{client: http.DefaultClient, config: config}
+func NewWorkOutputsMonthlyRepository(client *http.Client, config config.Config) WorkOutputsMonthlyRepository {
+	return &workOutputsMonthlyRepository{client: client, config: config}
 }
 
 func (womr *workOutputsMonthlyRepository) Get(token string, monthly string, userId int, limit int, page int, from string, to string) ([]DailyWorkData, error) {
@@ -98,6 +99,13 @@ func (womr *workOutputsMonthlyRepository) Get(token string, monthly string, user
 	if err != nil {
 		return nil, err
 	}
+	q := u.Query()
+	q.Set("user_id", strconv.Itoa(userId))
+	q.Set("limit", strconv.Itoa(limit))
+	q.Set("page", strconv.Itoa(page))
+	q.Set("from", from)
+	q.Set("to", to)
+	u.RawQuery = q.Encode()
 
 	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {

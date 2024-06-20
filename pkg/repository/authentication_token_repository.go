@@ -22,8 +22,8 @@ type AuthenticationToken struct {
 	Token     string `json:"token"`
 }
 
-func NewAuthenticationTokenRepository(config config.Config) AuthenticationTokenRepository {
-	return &authenticationTokenRepository{client: http.DefaultClient, config: config}
+func NewAuthenticationTokenRepository(client *http.Client, config config.Config) AuthenticationTokenRepository {
+	return &authenticationTokenRepository{client: client, config: config}
 }
 
 func (atr *authenticationTokenRepository) Get() (*AuthenticationToken, error) {
