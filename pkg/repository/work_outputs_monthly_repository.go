@@ -2,6 +2,7 @@ package repository
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/ko44d/hrmos-time-aggregator/pkg/config"
 	"github.com/ko44d/hrmos-time-aggregator/pkg/hrmos/work_outputs_monthly"
@@ -102,7 +103,11 @@ func NewWorkOutputsMonthlyRepository(client *http.Client, config config.Config) 
 }
 
 func (womr *workOutputsMonthlyRepository) GetRequestParams(token, monthly string, query work_outputs_monthly.QueryParams) RequestParams {
-	return RequestParams{token: token, monthly: monthly, query: query}
+	return RequestParams{
+		token:   token,
+		monthly: monthly,
+		query:   query,
+	}
 }
 
 func (womr *workOutputsMonthlyRepository) Get(params RequestParams) ([]DailyWorkData, error) {
@@ -126,6 +131,10 @@ func (womr *workOutputsMonthlyRepository) Get(params RequestParams) ([]DailyWork
 		return nil, err
 	}
 	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return nil, errors.New("failed to fetch work outputs monthly data")
+	}
 
 	var dwd []DailyWorkData
 	if err := json.NewDecoder(res.Body).Decode(&dwd); err != nil {

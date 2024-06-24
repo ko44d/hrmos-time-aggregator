@@ -1,12 +1,14 @@
 package controller
 
 import (
+	"github.com/gin-gonic/gin"
+	"github.com/ko44d/hrmos-time-aggregator/pkg/dto"
 	"github.com/ko44d/hrmos-time-aggregator/pkg/usecase"
-	"log"
+	"net/http"
 )
 
 type EmployeeOvertimeController interface {
-	Aggregate() error
+	Aggregate(ctx *gin.Context)
 }
 
 type employeeOvertimeController struct {
@@ -18,16 +20,19 @@ func NewEmployeeOvertimeController(atu usecase.AuthenticationTokenUsecase, womu 
 	return &employeeOvertimeController{atu: atu, womu: womu}
 }
 
-func (eoc *employeeOvertimeController) Aggregate() error {
+func (eoc *employeeOvertimeController) Aggregate(ctx *gin.Context) {
 	res, err := eoc.atu.Get()
 	if err != nil {
-		return err
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 
-	dwds, err := eoc.womu.Get(res.Token, "2024-05", 0, 0, 0, "", "")
+	query := dto.NewWorkOutputsMonthlyQuery(res.Token, "2024-05", 0, 0, 0, "", "")
+
+	data, err := eoc.womu.Get(query)
 	if err != nil {
-		return err
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
-	log.Printf("%v\n", dwds)
-	return nil
+	ctx.HTML(http.StatusOK, "work_outputs.html", data)
 }
