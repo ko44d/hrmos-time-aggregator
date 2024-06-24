@@ -12,22 +12,27 @@ type EmployeeOvertimeController interface {
 }
 
 type employeeOvertimeController struct {
-	atu  usecase.AuthenticationTokenUsecase
 	womu usecase.WorkOutputsMonthlyUsecase
 }
 
-func NewEmployeeOvertimeController(atu usecase.AuthenticationTokenUsecase, womu usecase.WorkOutputsMonthlyUsecase) EmployeeOvertimeController {
-	return &employeeOvertimeController{atu: atu, womu: womu}
+func NewEmployeeOvertimeController(womu usecase.WorkOutputsMonthlyUsecase) EmployeeOvertimeController {
+	return &employeeOvertimeController{womu: womu}
 }
 
 func (eoc *employeeOvertimeController) Aggregate(ctx *gin.Context) {
-	res, err := eoc.atu.Get()
+	token, err := ctx.Cookie("token")
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Token not found"})
 		return
 	}
 
-	query := dto.NewWorkOutputsMonthlyQuery(res.Token, "2024-05", 0, 0, 0, "", "")
+	companyURL, err := ctx.Cookie("company_url")
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Company URL not found"})
+		return
+	}
+
+	query := dto.NewWorkOutputsMonthlyQuery(token, companyURL, "2024-05", 5, 31, 0, "", "")
 
 	data, err := eoc.womu.Get(query)
 	if err != nil {

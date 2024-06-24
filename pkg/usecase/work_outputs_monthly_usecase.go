@@ -23,6 +23,6 @@ func (womu *workOutputsMonthlyUsecase) Get(query dto.WorkOutputsMonthlyQuery) ([
 	if err != nil {
 		return nil, err
 	}
-	params := womu.womr.GetRequestParams(query.Token, query.Monthly, q)
+	params := womu.womr.GetRequestParams(query.Token, query.CompanyURL, query.Monthly, q)
 	return womu.womr.Get(params)
 }

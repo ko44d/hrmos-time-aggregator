@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/ko44d/hrmos-time-aggregator/pkg/config"
 	"github.com/ko44d/hrmos-time-aggregator/pkg/hrmos/work_outputs_monthly"
 	"net/http"
 	"net/url"
@@ -12,12 +11,11 @@ import (
 
 type WorkOutputsMonthlyRepository interface {
 	Get(params RequestParams) ([]DailyWorkData, error)
-	GetRequestParams(token, monthly string, query work_outputs_monthly.QueryParams) RequestParams
+	GetRequestParams(token, companyUrl, monthly string, query work_outputs_monthly.QueryParams) RequestParams
 }
 
 type workOutputsMonthlyRepository struct {
 	client *http.Client
-	config config.Config
 }
 
 type DailyWorkData struct {
@@ -93,25 +91,27 @@ type Work struct {
 }
 
 type RequestParams struct {
-	token   string
-	monthly string
-	query   work_outputs_monthly.QueryParams
+	token      string
+	companyURL string
+	monthly    string
+	query      work_outputs_monthly.QueryParams
 }
 
-func NewWorkOutputsMonthlyRepository(client *http.Client, config config.Config) WorkOutputsMonthlyRepository {
-	return &workOutputsMonthlyRepository{client: client, config: config}
+func NewWorkOutputsMonthlyRepository(client *http.Client) WorkOutputsMonthlyRepository {
+	return &workOutputsMonthlyRepository{client: client}
 }
 
-func (womr *workOutputsMonthlyRepository) GetRequestParams(token, monthly string, query work_outputs_monthly.QueryParams) RequestParams {
+func (womr *workOutputsMonthlyRepository) GetRequestParams(token, companyURL, monthly string, query work_outputs_monthly.QueryParams) RequestParams {
 	return RequestParams{
-		token:   token,
-		monthly: monthly,
-		query:   query,
+		token:      token,
+		companyURL: companyURL,
+		monthly:    monthly,
+		query:      query,
 	}
 }
 
 func (womr *workOutputsMonthlyRepository) Get(params RequestParams) ([]DailyWorkData, error) {
-	u, err := url.Parse(fmt.Sprintf("%s://%s/api/%s/v1/work_outputs/monthly/%s", "https", "ieyasu.co", womr.config.CompanyURL, params.monthly))
+	u, err := url.Parse(fmt.Sprintf("%s://%s/api/%s/v1/work_outputs/monthly/%s", "https", "ieyasu.co", params.companyURL, params.monthly))
 	if err != nil {
 		return nil, err
 	}

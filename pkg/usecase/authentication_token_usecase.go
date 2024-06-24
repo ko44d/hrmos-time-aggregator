@@ -3,7 +3,7 @@ package usecase
 import "github.com/ko44d/hrmos-time-aggregator/pkg/repository"
 
 type AuthenticationTokenUsecase interface {
-	Get() (*repository.AuthenticationToken, error)
+	GetToken(apiKey, companyUrl string) (*repository.AuthenticationToken, error)
 }
 
 type authenticationTokenUsecase struct {
@@ -14,6 +14,6 @@ func NewAuthenticationTokenUsecase(atr repository.AuthenticationTokenRepository)
 	return &authenticationTokenUsecase{atr: atr}
 }
 
-func (atu *authenticationTokenUsecase) Get() (*repository.AuthenticationToken, error) {
-	return atu.atr.Get()
+func (atu *authenticationTokenUsecase) GetToken(apiKey, companyURL string) (*repository.AuthenticationToken, error) {
+	return atu.atr.Get(apiKey, companyURL)
 }

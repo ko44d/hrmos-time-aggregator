@@ -3,18 +3,16 @@ package repository
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ko44d/hrmos-time-aggregator/pkg/config"
 	"net/http"
 	"net/url"
 )
 
 type AuthenticationTokenRepository interface {
-	Get() (*AuthenticationToken, error)
+	Get(apiKey, companyUrl string) (*AuthenticationToken, error)
 }
 
 type authenticationTokenRepository struct {
 	client *http.Client
-	config config.Config
 }
 
 type AuthenticationToken struct {
@@ -22,12 +20,12 @@ type AuthenticationToken struct {
 	Token     string `json:"token"`
 }
 
-func NewAuthenticationTokenRepository(client *http.Client, config config.Config) AuthenticationTokenRepository {
-	return &authenticationTokenRepository{client: client, config: config}
+func NewAuthenticationTokenRepository(client *http.Client) AuthenticationTokenRepository {
+	return &authenticationTokenRepository{client: client}
 }
 
-func (atr *authenticationTokenRepository) Get() (*AuthenticationToken, error) {
-	u, err := url.Parse(fmt.Sprintf("%s://%s/api/%s/v1/authentication/token", "https", "ieyasu.co", atr.config.CompanyURL))
+func (atr *authenticationTokenRepository) Get(apiKey, companyUrl string) (*AuthenticationToken, error) {
+	u, err := url.Parse(fmt.Sprintf("%s://%s/api/%s/v1/authentication/token", "https", "ieyasu.co", companyUrl))
 	if err != nil {
 		fmt.Errorf(err.Error())
 	}
@@ -37,7 +35,7 @@ func (atr *authenticationTokenRepository) Get() (*AuthenticationToken, error) {
 		return nil, err
 	}
 
-	req.Header.Set("Authorization", fmt.Sprintf("Basic %s", atr.config.APIKey))
+	req.Header.Set("Authorization", fmt.Sprintf("Basic %s", apiKey))
 	req.Header.Set("Content-Type", "application/json")
 
 	res, err := atr.client.Do(req)

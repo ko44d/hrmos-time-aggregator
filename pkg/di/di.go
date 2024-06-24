@@ -1,7 +1,6 @@
 package di
 
 import (
-	"github.com/ko44d/hrmos-time-aggregator/pkg/config"
 	"github.com/ko44d/hrmos-time-aggregator/pkg/controller"
 	"github.com/ko44d/hrmos-time-aggregator/pkg/repository"
 	"github.com/ko44d/hrmos-time-aggregator/pkg/usecase"
@@ -20,7 +19,7 @@ func (di *DI) HTTP() *http.Client {
 }
 
 func (di *DI) AuthenticationTokenRepository() repository.AuthenticationTokenRepository {
-	return repository.NewAuthenticationTokenRepository(di.HTTP(), di.Config())
+	return repository.NewAuthenticationTokenRepository(di.HTTP())
 }
 
 func (di *DI) AuthenticationTokenUsecase() usecase.AuthenticationTokenUsecase {
@@ -28,7 +27,7 @@ func (di *DI) AuthenticationTokenUsecase() usecase.AuthenticationTokenUsecase {
 }
 
 func (di *DI) WorkOutputsMonthlyRepository() repository.WorkOutputsMonthlyRepository {
-	return repository.NewWorkOutputsMonthlyRepository(di.HTTP(), di.Config())
+	return repository.NewWorkOutputsMonthlyRepository(di.HTTP())
 }
 
 func (di *DI) WorkOutputsMonthlyUsecase() usecase.WorkOutputsMonthlyUsecase {
@@ -36,17 +35,9 @@ func (di *DI) WorkOutputsMonthlyUsecase() usecase.WorkOutputsMonthlyUsecase {
 }
 
 func (di *DI) EmployeeOvertimeController() controller.EmployeeOvertimeController {
-	return controller.NewEmployeeOvertimeController(di.AuthenticationTokenUsecase(), di.WorkOutputsMonthlyUsecase())
+	return controller.NewEmployeeOvertimeController(di.WorkOutputsMonthlyUsecase())
 }
 
 func (di *DI) TopPageController() controller.TopPageController {
-	return controller.NewTopPageController()
-}
-
-func (di *DI) Config() config.Config {
-	c, err := config.New()
-	if err != nil {
-		panic(err)
-	}
-	return c
+	return controller.NewTopPageController(di.AuthenticationTokenUsecase())
 }

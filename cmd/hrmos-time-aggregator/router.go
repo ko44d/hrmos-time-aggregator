@@ -12,7 +12,7 @@ func SetupRouter(tpc controller.TopPageController, eoc controller.EmployeeOverti
 
 	r.GET("/", tpc.ShowForm)
 	r.POST("/set_api_key", tpc.SetAPIKey)
-	r.GET("/api/v1/aggregate", eoc.Aggregate)
+	r.GET("/aggregate", eoc.Aggregate)
 
 	return r
 }
