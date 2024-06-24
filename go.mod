@@ -2,10 +2,7 @@ module github.com/ko44d/hrmos-time-aggregator
 
 go 1.22.4
 
-require (
-	github.com/caarlos0/env/v11 v11.0.1
-	github.com/gin-gonic/gin v1.10.0
-)
+require github.com/gin-gonic/gin v1.10.0
 
 require (
 	github.com/bytedance/sonic v1.11.9 // indirect
