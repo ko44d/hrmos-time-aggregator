@@ -5,13 +5,13 @@ import (
 	"github.com/ko44d/hrmos-time-aggregator/pkg/controller"
 )
 
-func SetupRouter(eoc controller.EmployeeOvertimeController) *gin.Engine {
+func SetupRouter(tpc controller.TopPageController, eoc controller.EmployeeOvertimeController) *gin.Engine {
 	r := gin.Default()
 
-	// テンプレートのロード
 	r.LoadHTMLGlob("templates/*")
 
-	// ルーティングの設定
+	r.GET("/", tpc.ShowForm)
+	r.POST("/set_api_key", tpc.SetAPIKey)
 	r.GET("/api/v1/aggregate", eoc.Aggregate)
 
 	return r

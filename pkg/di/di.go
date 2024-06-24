@@ -39,6 +39,10 @@ func (di *DI) EmployeeOvertimeController() controller.EmployeeOvertimeController
 	return controller.NewEmployeeOvertimeController(di.AuthenticationTokenUsecase(), di.WorkOutputsMonthlyUsecase())
 }
 
+func (di *DI) TopPageController() controller.TopPageController {
+	return controller.NewTopPageController()
+}
+
 func (di *DI) Config() config.Config {
 	c, err := config.New()
 	if err != nil {

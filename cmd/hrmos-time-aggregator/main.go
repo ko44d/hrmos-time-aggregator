@@ -9,7 +9,8 @@ func main() {
 
 	di := di.NewDI()
 	eoc := di.EmployeeOvertimeController()
-	r := SetupRouter(eoc)
+	tpc := di.TopPageController()
+	r := SetupRouter(tpc, eoc)
 
 	log.Println("Server started at :8080")
 	if err := r.Run(":8080"); err != nil {
