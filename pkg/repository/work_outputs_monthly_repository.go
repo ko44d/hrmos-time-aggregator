@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ko44d/hrmos-time-aggregator/pkg/config"
+	"github.com/ko44d/hrmos-time-aggregator/pkg/hrmos/work_outputs_monthly"
 	"net/http"
 	"net/url"
-	"strconv"
 )
 
 type WorkOutputsMonthlyRepository interface {
-	Get(token string, monthly string, userId int, limit int, page int, from string, to string) ([]DailyWorkData, error)
+	Get(params RequestParams) ([]DailyWorkData, error)
+	GetRequestParams(token, monthly string, query work_outputs_monthly.QueryParams) RequestParams
 }
 
 type workOutputsMonthlyRepository struct {
@@ -71,7 +72,7 @@ type DailyWorkData struct {
 	Notes                                   string                 `json:"notes"`
 	ImageAttachmentIds                      []int                  `json:"image_attachment_ids"`
 	PdfAttachmentIds                        []int                  `json:"pdf_attachment_ids"`
-	Work                                    []Work                 `json:"work"`
+	Work                                    Work                   `json:"work"`
 }
 
 type ExtraWorkOutputBreak struct {
@@ -90,29 +91,34 @@ type Work struct {
 	OtherOperationRatio string `json:"other_operation_ratio"`
 }
 
+type RequestParams struct {
+	token   string
+	monthly string
+	query   work_outputs_monthly.QueryParams
+}
+
 func NewWorkOutputsMonthlyRepository(client *http.Client, config config.Config) WorkOutputsMonthlyRepository {
 	return &workOutputsMonthlyRepository{client: client, config: config}
 }
 
-func (womr *workOutputsMonthlyRepository) Get(token string, monthly string, userId int, limit int, page int, from string, to string) ([]DailyWorkData, error) {
-	u, err := url.Parse(fmt.Sprintf("%s://%s/api/%s/v1/work_outputs/monthly/%s", "https", "ieyasu.co", womr.config.CompanyURL, monthly))
+func (womr *workOutputsMonthlyRepository) GetRequestParams(token, monthly string, query work_outputs_monthly.QueryParams) RequestParams {
+	return RequestParams{token: token, monthly: monthly, query: query}
+}
+
+func (womr *workOutputsMonthlyRepository) Get(params RequestParams) ([]DailyWorkData, error) {
+	u, err := url.Parse(fmt.Sprintf("%s://%s/api/%s/v1/work_outputs/monthly/%s", "https", "ieyasu.co", womr.config.CompanyURL, params.monthly))
 	if err != nil {
 		return nil, err
 	}
-	q := u.Query()
-	q.Set("user_id", strconv.Itoa(userId))
-	q.Set("limit", strconv.Itoa(limit))
-	q.Set("page", strconv.Itoa(page))
-	q.Set("from", from)
-	q.Set("to", to)
-	u.RawQuery = q.Encode()
+
+	u.RawQuery = params.query.ToValues().Encode()
 
 	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Set("Authorization", fmt.Sprintf("Token %s", token))
+	req.Header.Set("Authorization", fmt.Sprintf("Token %s", params.token))
 	req.Header.Set("Content-Type", "application/json")
 
 	res, err := womr.client.Do(req)

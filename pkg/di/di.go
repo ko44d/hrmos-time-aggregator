@@ -32,7 +32,7 @@ func (di *DI) WorkOutputsMonthlyRepository() repository.WorkOutputsMonthlyReposi
 }
 
 func (di *DI) WorkOutputsMonthlyUsecase() usecase.WorkOutputsMonthlyUsecase {
-	return di.WorkOutputsMonthlyRepository()
+	return usecase.NewWorkOutputsMonthlyUsecase(di.WorkOutputsMonthlyRepository())
 }
 
 func (di *DI) EmployeeOvertimeController() controller.EmployeeOvertimeController {

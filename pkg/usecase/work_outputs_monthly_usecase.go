@@ -1,6 +1,9 @@
 package usecase
 
-import "github.com/ko44d/hrmos-time-aggregator/pkg/repository"
+import (
+	"github.com/ko44d/hrmos-time-aggregator/pkg/hrmos/work_outputs_monthly"
+	"github.com/ko44d/hrmos-time-aggregator/pkg/repository"
+)
 
 type WorkOutputsMonthlyUsecase interface {
 	Get(token string, monthly string, userId int, limit int, page int, from string, to string) ([]repository.DailyWorkData, error)
@@ -15,5 +18,8 @@ func NewWorkOutputsMonthlyUsecase(womr repository.WorkOutputsMonthlyRepository) 
 }
 
 func (womu *workOutputsMonthlyUsecase) Get(token string, monthly string, userId int, limit int, page int, from string, to string) ([]repository.DailyWorkData, error) {
-	return womu.womr.Get(token, monthly, userId, limit, page, from, to)
+
+	query := work_outputs_monthly.NewQueryParams(userId, limit, page, from, to)
+	params := womu.womr.GetRequestParams(token, monthly, query)
+	return womu.womr.Get(params)
 }

@@ -23,6 +23,11 @@ func (eoc *employeeOvertimeController) Aggregate() error {
 	if err != nil {
 		return err
 	}
-	log.Printf("%v\n", res)
+
+	dwds, err := eoc.womu.Get(res.Token, "2024-05", 0, 0, 0, "", "")
+	if err != nil {
+		return err
+	}
+	log.Printf("%v\n", dwds)
 	return nil
 }
