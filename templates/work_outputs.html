@@ -5,37 +5,39 @@
     <title>日次勤怠データ</title>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
-<body>
-<h1>日次勤怠データ</h1>
-<table class="styled-table">
-    <thead>
-    <tr>
-        <th>ユーザーID</th>
-        <th>社員番号</th>
-        <th>氏名</th>
-        <th>年月</th>
-        <th>日付</th>
-        <th>曜日</th>
-        <th>出勤時刻</th>
-        <th>退勤時刻</th>
-        <th>残業時間</th>
-    </tr>
-    </thead>
-    <tbody>
-    {{range .}}
-    <tr>
-        <td>{{.UserId}}</td>
-        <td>{{.Number}}</td>
-        <td>{{.FullName}}</td>
-        <td>{{.Month}}</td>
-        <td>{{.Day}}</td>
-        <td>{{.Wday}}</td>
-        <td>{{.StartAt}}</td>
-        <td>{{.EndAt}}</td>
-        <td>{{.TotalOverWorkTime}}</td>
-    </tr>
-    {{end}}
-    </tbody>
-</table>
+<body class="table-page">
+<div class="container">
+    <h1>日次勤怠データ</h1>
+    <table class="styled-table">
+        <thead>
+        <tr>
+            <th>ユーザーID</th>
+            <th>社員番号</th>
+            <th>氏名</th>
+            <th>年月</th>
+            <th>日付</th>
+            <th>曜日</th>
+            <th>出勤時刻</th>
+            <th>退勤時刻</th>
+            <th>残業時間</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .}}
+        <tr>
+            <td>{{.UserId}}</td>
+            <td>{{.Number}}</td>
+            <td>{{.FullName}}</td>
+            <td>{{.Month}}</td>
+            <td>{{.Day}}</td>
+            <td>{{.Wday}}</td>
+            <td>{{.StartAt}}</td>
+            <td>{{.EndAt}}</td>
+            <td>{{.TotalOverWorkTime}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+</div>
 </body>
 </html>
