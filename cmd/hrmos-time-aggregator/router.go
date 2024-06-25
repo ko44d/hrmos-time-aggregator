@@ -8,6 +8,8 @@ import (
 func SetupRouter(tpc controller.TopPageController, eoc controller.EmployeeOvertimeController) *gin.Engine {
 	r := gin.Default()
 
+	r.Static("/static", "./static")
+
 	r.LoadHTMLGlob("templates/*")
 
 	r.GET("/", tpc.ShowForm)

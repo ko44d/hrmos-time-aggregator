@@ -1,0 +1,10 @@
+.styled-table {
+    border: 1px solid black; /* 枠線のスタイルを指定 */
+    border-collapse: collapse; /* 枠線の重複を避ける */
+}
+
+.styled-table th, .styled-table td {
+    border: 1px solid black; /* セルの枠線のスタイルを指定 */
+    padding: 8px; /* セルの内側の余白を指定 */
+    text-align: left; /* テキストの左寄せ */
+}

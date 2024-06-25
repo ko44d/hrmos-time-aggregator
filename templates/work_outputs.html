@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>日次勤怠データ</title>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
 <h1>日次勤怠データ</h1>
-<table border="1">
+<table class="styled-table">
     <thead>
     <tr>
         <th>ユーザーID</th>
@@ -17,6 +18,7 @@
         <th>曜日</th>
         <th>出勤時刻</th>
         <th>退勤時刻</th>
+        <th>残業時間</th>
     </tr>
     </thead>
     <tbody>
@@ -30,7 +32,7 @@
         <td>{{.Wday}}</td>
         <td>{{.StartAt}}</td>
         <td>{{.EndAt}}</td>
-        <!-- 他のフィールドもここに追加 -->
+        <td>{{.TotalOverWorkTime}}</td>
     </tr>
     {{end}}
     </tbody>
