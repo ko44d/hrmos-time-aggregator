@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>日次勤怠データ</title>
     <link rel="stylesheet" href="/static/styles.css">
-    <script src="/static/script.js" defer></script>
+    <meta name="monthly" content="{{.monthly}}">
+    <script src="/static/work_outputs_page.js" defer></script>
 </head>
 <body>
 <div class="container">
@@ -28,7 +29,7 @@
         </tr>
         </thead>
         <tbody id="work-data-body">
-        {{range .}}
+        {{range .data}}
         <tr>
             <td>{{.UserId}}</td>
             <td>{{.Number}}</td>

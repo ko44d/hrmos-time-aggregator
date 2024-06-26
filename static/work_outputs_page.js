@@ -4,6 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const baseYear = 2023;
     const baseMonth = 8;
     const startDate = new Date(baseYear, baseMonth - 1); // 2023年8月度開始
+    const initialMonthly = document.querySelector('meta[name="monthly"]').getAttribute('content');
+    const initialMonthYear = initialMonthly.split('-');
+    const initialYear = parseInt(initialMonthYear[0]);
+    const initialMonth = parseInt(initialMonthYear[1]);
 
     function getMonthYearString(year, month) {
         return `${year}年 ${String(month).padStart(2, '0')}月度`;
@@ -44,9 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 初期表示設定
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth() + 1; // JavaScriptの月は0から始まるため+1
-    populateDropdown(currentYear, currentMonth);
+    populateDropdown(initialYear, initialMonth);
 
     // ドロップダウンの選択が変更されたときにデータを更新する処理
     select.addEventListener('change', () => {
@@ -57,35 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // ドロップダウンメニューを更新
         populateDropdown(selectedYear, selectedMonth);
 
-        // データを更新するためのAPIリクエスト
-        fetch(`/api/work_outputs?month_year=${select.value}`)
-            .then(response => response.json())
-            .then(data => {
-                // テーブルの内容をクリア
-                workDataBody.innerHTML = '';
-
-                // 新しいデータでテーブルを更新
-                data.forEach(item => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${item.UserId}</td>
-                        <td>${item.Number}</td>
-                        <td>${item.FullName}</td>
-                        <td>${item.Month}</td>
-                        <td>${item.Day}</td>
-                        <td>${item.Wday}</td>
-                        <td>${item.StartAt}</td>
-                        <td>${item.EndAt}</td>
-                        <td>${item.TotalOverWorkTime}</td>
-                    `;
-                    workDataBody.appendChild(row);
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching work outputs data:', error);
-            });
+        // データを更新するためのページリダイレクト
+        window.location.href = `/aggregate?monthly=${select.value}`;
     });
-
-    // 初期データの取得
-    select.dispatchEvent(new Event('change'));
 });

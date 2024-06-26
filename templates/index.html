@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <title>API KeyとCompany URL入力</title>
   <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/index_page.js" defer></script>
 </head>
 <body class="top-page">
 <div class="container">
   <h1>API KeyとCompany URLを入力してください</h1>
-  <form action="/set_api_key" method="post">
+  <form id="api-form">
     <div class="form-group">
       <label for="api_key">API Key:</label>
       <input type="text" id="api_key" name="api_key" class="form-control">
