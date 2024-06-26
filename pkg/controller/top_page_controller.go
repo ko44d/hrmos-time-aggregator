@@ -31,7 +31,7 @@ func (c *topPageController) SetAPIKey(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	
+
 	ctx.SetCookie("token", res.Token, 3600, "/", "localhost", false, true)
 	ctx.SetCookie("company_url", companyURL, 3600, "/", "localhost", false, true)
 	ctx.Redirect(http.StatusSeeOther, "/aggregate")

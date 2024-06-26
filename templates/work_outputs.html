@@ -7,29 +7,30 @@
     <meta name="monthly" content="{{.monthly}}">
     <script src="/static/work_outputs_page.js" defer></script>
 </head>
-<body>
+<body class="table-page">
 <div class="container">
     <h1>日次勤怠データ</h1>
     <div class="form-group">
         <label for="month_year">年月度:</label>
         <select id="month_year" class="form-control" required></select>
     </div>
-    <div>
-        「直行直帰(残業有)」、「直行(残業有)」、「直帰(残業有)」の合計残業時間： {{.hours}}:{{.minutes}}
+    <div class="summary">
+        <strong>「直行直帰(残業有)」、「直行(残業有)」、「直帰(残業有)」の合計残業時間：</strong>
+        <span id="total-overtime">{{.hours}}:{{.minutes}}</span>
     </div>
     <table class="styled-table">
         <thead>
         <tr>
-            <th>ユーザーID</th>
+            <th>ID</th>
             <th>社員番号</th>
             <th>氏名</th>
             <th>年月</th>
             <th>日付</th>
             <th>曜日</th>
-            <th>勤務区分</th>
-            <th>出勤時刻</th>
-            <th>退勤時刻</th>
-            <th>残業時間</th>
+            <th>区分</th>
+            <th>出勤</th>
+            <th>退勤</th>
+            <th>残業</th>
         </tr>
         </thead>
         <tbody id="work-data-body">
