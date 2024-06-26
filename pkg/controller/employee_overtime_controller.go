@@ -1,12 +1,10 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/ko44d/hrmos-time-aggregator/pkg/dto"
 	"github.com/ko44d/hrmos-time-aggregator/pkg/usecase"
 	"net/http"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -24,10 +22,6 @@ func NewEmployeeOvertimeController(womu usecase.WorkOutputsMonthlyUsecase) Emplo
 	return &employeeOvertimeController{womu: womu}
 }
 
-var timeFormat = regexp.MustCompile(`^\d{1,2}:\d{2}$`)
-
-var pattern = regexp.MustCompile(`^(直行直帰|直行|直帰)\(残業有\)$`)
-
 func (eoc *employeeOvertimeController) Aggregate(ctx *gin.Context) {
 	token, err := ctx.Cookie("token")
 	if err != nil {
@@ -44,6 +38,7 @@ func (eoc *employeeOvertimeController) Aggregate(ctx *gin.Context) {
 		currentTime := time.Now()
 		monthly = currentTime.Format("2006-01")
 	}
+
 	query := dto.NewWorkOutputsMonthlyQuery(token, companyURL, monthly, 7, 31, 1, "", "")
 	data, err := eoc.womu.Get(query)
 	if err != nil {
@@ -51,32 +46,28 @@ func (eoc *employeeOvertimeController) Aggregate(ctx *gin.Context) {
 		return
 	}
 
-	var totalMinutes int
-	for _, d := range data {
-		if pattern.MatchString(d.SegmentTitle) {
-			if !timeFormat.MatchString(d.TotalOverWorkTime) {
-				ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Errorf("invalid time format")})
+	totalOvertimeMinutes := 0
+	for _, record := range data {
+		if record.SegmentTitle == "直行直帰(残業有)" || record.SegmentTitle == "直行(残業有)" || record.SegmentTitle == "直帰(残業有)" {
+			parts := strings.Split(record.TotalOverWorkTime, ":")
+			if len(parts) == 2 {
+				hours, _ := strconv.Atoi(parts[0])
+				minutes, _ := strconv.Atoi(parts[1])
+				totalOvertimeMinutes += hours*60 + minutes
 			}
-			parts := strings.Split(d.TotalOverWorkTime, ":")
-			hours, err := strconv.Atoi(parts[0])
-			if err != nil {
-				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			}
-			minutes, err := strconv.Atoi(parts[1])
-			if err != nil {
-				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			}
-			totalMinutes += hours*60 + minutes
 		}
 	}
 
-	hours := totalMinutes / 60
-	minutes := totalMinutes % 60
+	totalHours := totalOvertimeMinutes / 60
+	totalMinutes := totalOvertimeMinutes % 60
+	totalOvertime := "0:00"
+	if totalOvertimeMinutes > 0 {
+		totalOvertime = strconv.Itoa(totalHours) + ":" + strconv.Itoa(totalMinutes)
+	}
 
 	ctx.HTML(http.StatusOK, "work_outputs.html", gin.H{
-		"data":    data,
-		"monthly": monthly,
-		"hours":   hours,
-		"minutes": minutes,
+		"data":          data,
+		"monthly":       monthly,
+		"totalOvertime": totalOvertime,
 	})
 }
