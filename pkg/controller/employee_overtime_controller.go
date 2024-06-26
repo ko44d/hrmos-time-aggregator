@@ -51,8 +51,14 @@ func (eoc *employeeOvertimeController) Aggregate(ctx *gin.Context) {
 		if record.SegmentTitle == "直行直帰(残業有)" || record.SegmentTitle == "直行(残業有)" || record.SegmentTitle == "直帰(残業有)" {
 			parts := strings.Split(record.TotalOverWorkTime, ":")
 			if len(parts) == 2 {
-				hours, _ := strconv.Atoi(parts[0])
-				minutes, _ := strconv.Atoi(parts[1])
+				hours, err := strconv.Atoi(parts[0])
+				if err != nil {
+					ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				}
+				minutes, err := strconv.Atoi(parts[1])
+				if err != nil {
+					ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				}
 				totalOvertimeMinutes += hours*60 + minutes
 			}
 		}
