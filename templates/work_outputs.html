@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <title>日次勤怠データ</title>
     <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/script.js" defer></script>
 </head>
-<body class="table-page">
+<body>
 <div class="container">
     <h1>日次勤怠データ</h1>
+    <div class="form-group">
+        <label for="month_year">年月度:</label>
+        <select id="month_year" class="form-control" required></select>
+    </div>
     <table class="styled-table">
         <thead>
         <tr>
@@ -22,7 +27,7 @@
             <th>残業時間</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody id="work-data-body">
         {{range .}}
         <tr>
             <td>{{.UserId}}</td>
