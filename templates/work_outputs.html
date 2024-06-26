@@ -14,6 +14,9 @@
         <label for="month_year">年月度:</label>
         <select id="month_year" class="form-control" required></select>
     </div>
+    <div>
+        「直行直帰(残業有)」、「直行(残業有)」、「直帰(残業有)」の合計残業時間： {{.hours}}:{{.minutes}}
+    </div>
     <table class="styled-table">
         <thead>
         <tr>
@@ -23,6 +26,7 @@
             <th>年月</th>
             <th>日付</th>
             <th>曜日</th>
+            <th>勤務区分</th>
             <th>出勤時刻</th>
             <th>退勤時刻</th>
             <th>残業時間</th>
@@ -37,6 +41,7 @@
             <td>{{.Month}}</td>
             <td>{{.Day}}</td>
             <td>{{.Wday}}</td>
+            <td>{{.SegmentTitle}}</td>
             <td>{{.StartAt}}</td>
             <td>{{.EndAt}}</td>
             <td>{{.TotalOverWorkTime}}</td>
