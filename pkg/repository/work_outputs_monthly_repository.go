@@ -7,6 +7,7 @@ import (
 	"github.com/ko44d/hrmos-time-aggregator/pkg/hrmos/work_outputs_monthly"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 type WorkOutputsMonthlyRepository interface {
@@ -133,7 +134,7 @@ func (womr *workOutputsMonthlyRepository) Get(params RequestParams) ([]DailyWork
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
-		return nil, errors.New("failed to fetch work outputs monthly data")
+		return nil, errors.New(fmt.Sprintf("failed to fetch work outputs monthly data. status code: %s", strconv.Itoa(res.StatusCode)))
 	}
 
 	var dwd []DailyWorkData

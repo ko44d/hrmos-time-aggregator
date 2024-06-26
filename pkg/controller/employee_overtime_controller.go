@@ -44,7 +44,6 @@ func (eoc *employeeOvertimeController) Aggregate(ctx *gin.Context) {
 		currentTime := time.Now()
 		monthly = currentTime.Format("2006-01")
 	}
-
 	query := dto.NewWorkOutputsMonthlyQuery(token, companyURL, monthly, 7, 31, 1, "", "")
 	data, err := eoc.womu.Get(query)
 	if err != nil {
