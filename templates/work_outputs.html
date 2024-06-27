@@ -14,17 +14,16 @@
         <label for="month_year">年月度:</label>
         <select id="month_year" class="form-control" required></select>
     </div>
+
+    {{range .dailyWorkDatas}}
     <div class="summary">
         <strong>「直行直帰(残業有)」、「直行(残業有)」、「直帰(残業有)」の合計残業時間：</strong>
-        <span id="total-overtime">{{.totalOvertime}}</span>
+        <span id="total-overtime">{{.TotalOvertime}}</span>
     </div>
     <table class="styled-table">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>社員番号</th>
             <th>氏名</th>
-            <th>年月</th>
             <th>日付</th>
             <th>曜日</th>
             <th>区分</th>
@@ -34,12 +33,9 @@
         </tr>
         </thead>
         <tbody id="work-data-body">
-        {{range .data}}
+        {{range .DailyWorkData}}
         <tr>
-            <td>{{.UserId}}</td>
-            <td>{{.Number}}</td>
             <td>{{.FullName}}</td>
-            <td>{{.Month}}</td>
             <td>{{.Day}}</td>
             <td>{{.Wday}}</td>
             <td>{{.SegmentTitle}}</td>
@@ -50,6 +46,7 @@
         {{end}}
         </tbody>
     </table>
+    {{end}}
 </div>
 </body>
 </html>
